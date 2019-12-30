@@ -29,6 +29,7 @@
 
 #define OK 0
 #define ERR_STOPPED 200
-#define ERR_SPI_INVALID_DEVICE 201
+#define ERR_SPI_BME280_INIT_FAILED 201
+#define ERR_SPI_BME280_READ_ERROR 202
 
 #endif /* MAIN_H_ */

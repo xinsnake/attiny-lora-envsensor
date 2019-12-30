@@ -13,28 +13,27 @@ void delay_ms(uint32_t ms)
 
 /************************************************************************/
 /* SPI                                                                  */
-/* https://github.com/MicrochipTech/TB3215_Getting_Started_with_SPI/blob/master/ATmega4809_SPI_Examples/Sending_Data_as_Master/main.c */
+/* https://github.com/MicrochipTech/TB3215_Getting_Started_with_SPI/    */
 /************************************************************************/
 void SPI0_init() {
-	PORTA.DIRSET = SPI_MOSI | SPI_CLOCK | SPI_SS_LORA | SPI_SS_BME280;
-	PORTA.DIRCLR = SPI_MISO;
-	SPI0.CTRLA = SPI_CLK2X_bm | SPI_DORD_bm | SPI_ENABLE_bm | SPI_MASTER_bm | SPI_PRESC_DIV4_gc;
-}
-
-void SPI0_select_lora() {
-	PORTA.OUTCLR |= SPI_SS_LORA;
-}
-
-void SPI0_release_lora() {
-	PORTA.OUT |= SPI_SS_LORA;
-}
-
-void SPI0_select_bme280() {
-	PORTA.OUTCLR |= SPI_SS_BME280;
-}
-
-void SPI0_release_bme280() {
-	PORTA.OUT |= SPI_SS_BME280;
+    PORTA.DIR |= SPI_MOSI;              /* Set MOSI pin direction to output */
+    PORTA.DIR &= ~SPI_MISO;             /* Set MISO pin direction to input */
+    PORTA.DIR |= SPI_CLOCK;             /* Set SCK pin direction to output */
+    PORTA.DIR |= SPI_SS_LORA;           /* Set SS pin 1 direction to output */
+    PORTA.DIR |= SPI_SS_BME280;         /* Set SS pin 2 direction to output */
+	        
+    PORTA.OUT |= SPI_SS_LORA;      
+    PORTA.OUT |= SPI_SS_BME280;        
+	
+    SPI0.CTRLA = SPI_ENABLE_bm          /* Enable module */
+			   | SPI_MASTER_bm          /* SPI module in Master mode */
+			   | SPI_CLK2X_bm           /* Enable double-speed */
+			   // | SPI_DORD_bm         /* LSB is transmitted first */
+			   | SPI_PRESC_DIV4_gc;    /* System Clock divided by 16 */
+			   
+	SPI0.CTRLB = SPI_BUFEN_bm           /* Buffer Mode Enable */
+			   | SPI_SSD_bm             /* Slave Select Disable */
+			   | SPI_MODE_0_gc;         /* SPI Mode 0 */
 }
 
 /************************************************************************/
@@ -43,61 +42,39 @@ void SPI0_release_bme280() {
 /* https://github.com/mongoose-os-libs/bme280/blob/master/src/mgos_bme280.c */
 /************************************************************************/
 
-int8_t BME280_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len)
-{
+int8_t BME280_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
     int8_t rslt = BME280_OK;
-
-	if (SPI_ID_BME280 == dev_id) {
-		SPI0_select_bme280();
+	PORTA.OUT &= ~SPI_SS_BME280;
+	
+	for (uint16_t i = 0; i <= len; i++) {
+		SPI0.DATA = reg_addr;
+		while (!(SPI0.INTFLAGS & SPI_IF_bm))  /* waits until data is exchanged*/
+		{
+			;
+		}
+		if (i != 0) {
+			reg_data[i - 1] = SPI0.DATA;
+		}
+	}
 		
-		/*
-		 * Data on the bus should be like
-		 * |----------------+---------------------+-------------|
-		 * | MOSI           | MISO                | Chip Select |
-		 * |----------------+---------------------|-------------|
-		 * | (don't care)   | (don't care)        | HIGH        |
-		 * | (reg_addr)     | (don't care)        | LOW         |
-		 * | (don't care)   | (reg_data[0])       | LOW         |
-		 * | (....)         | (....)              | LOW         |
-		 * | (don't care)   | (reg_data[len - 1]) | LOW         |
-		 * | (don't care)   | (don't care)        | HIGH        |
-		 * |----------------+---------------------|-------------|
-		 */
-		// TODO
-		
-		SPI0_release_bme280();
-		return rslt;
-    }
-
-    return ERR_SPI_INVALID_DEVICE;
+	PORTA.OUT |= SPI_SS_BME280;
+	return rslt;
 }
 
 int8_t BME280_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
     int8_t rslt = BME280_OK;
+    PORTA.OUT &= ~SPI_SS_BME280;
 
-	if (SPI_ID_BME280 == dev_id) {
-		SPI0_select_bme280();
+	for (uint16_t i = 0; i < len; i++) {
+		SPI0.DATA = reg_data[i];
+		while (!(SPI0.INTFLAGS & SPI_IF_bm))  /* waits until data is exchanged*/
+		{
+			;
+		}
+	}
 		
-		/*
-		 * Data on the bus should be like
-		 * |---------------------+--------------+-------------|
-		 * | MOSI                | MISO         | Chip Select |
-		 * |---------------------+--------------|-------------|
-		 * | (don't care)        | (don't care) | HIGH        |
-		 * | (reg_addr)          | (don't care) | LOW         |
-		 * | (reg_data[0])       | (don't care) | LOW         |
-		 * | (....)              | (....)       | LOW         |
-		 * | (reg_data[len - 1]) | (don't care) | LOW         |
-		 * | (don't care)        | (don't care) | HIGH        |
-		 * |---------------------+--------------|-------------|
-		 */
-		// TODO
-		
-		SPI0_release_bme280();
-		return rslt;
-    }
-
-    return ERR_SPI_INVALID_DEVICE;
+	PORTA.OUT |= SPI_SS_BME280;
+	return rslt;
 }
 
 int8_t BME280_init(bme280_dev *dev) {
@@ -152,14 +129,14 @@ int main(void)
 	struct bme280_dev env_sensor;
 	rslt = BME280_init(&env_sensor);
 	if (rslt != BME280_OK) {
-		// TODO
+		return ERR_SPI_BME280_INIT_FAILED;
 	}
 	
 	while (1) {
 		struct bme280_data comp_data;
 		rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &env_sensor);
 		if (rslt != BME280_OK) {
-			// TODO
+			return ERR_SPI_BME280_READ_ERROR;
 		}
 		
 		delay_ms(1 * ONE_SECOND);
