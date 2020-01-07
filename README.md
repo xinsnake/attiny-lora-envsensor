@@ -7,11 +7,13 @@ between the uC and different modules.
 
 ## Hardware Toolchain
 
-- Atmel Studio 7
-- Atmel-ICE / MPLAB® PICkit 4
-- Self-designed ATTinyX14 Development Board
+- Self-designed ATTinyX14 Development Board (Schematics to be added)
 - RFM95W with antenna
 - BME280 3.3v with SPI interface (6-pin board)
+
+- Atmel Studio 7
+- Atmel-ICE / MPLAB® PICkit 4
+- Kingst Logic Analyzer
 
 ## Schematics
 
