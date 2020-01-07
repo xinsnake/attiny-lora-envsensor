@@ -21,4 +21,4 @@ Tools I am using:
 
 ## Schematics
 
-_TO BE ADDED_
+![Schematic.2020-01-08.012123.png](/imgs/Schematic.2020-01-08.012123.png)
