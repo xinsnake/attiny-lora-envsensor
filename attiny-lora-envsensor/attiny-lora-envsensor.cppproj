@@ -12,9 +12,9 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>ATTiny412-LoRa.BME280</AssemblyName>
-    <Name>ATTiny412-LoRa.BME280</Name>
-    <RootNamespace>ATTiny412-LoRa.BME280</RootNamespace>
+    <AssemblyName>attiny-lora-envsensor</AssemblyName>
+    <Name>attiny-lora-envsensor</Name>
+    <RootNamespace>attiny-lora-envsensor</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
