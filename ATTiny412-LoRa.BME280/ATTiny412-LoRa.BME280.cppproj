@@ -5,7 +5,7 @@
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
     <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
-    <avrdevice>ATtiny412</avrdevice>
+    <avrdevice>ATtiny1614</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
     <Language>CPP</Language>
@@ -42,7 +42,7 @@
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
     <avrtoolserialnumber>J42700010634</avrtoolserialnumber>
-    <avrdeviceexpectedsignature>0x1E9223</avrdeviceexpectedsignature>
+    <avrdeviceexpectedsignature>0x1E9422</avrdeviceexpectedsignature>
     <avrtoolinterface>UPDI</avrtoolinterface>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
@@ -71,7 +71,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
-        <avrgcc.common.Device>-mmcu=attiny412 -B "%24(PackRepoDir)\Atmel\ATtiny_DFP\1.4.283\gcc\dev\attiny412"</avrgcc.common.Device>
+        <avrgcc.common.Device>-mmcu=attiny1614 -B "%24(PackRepoDir)\Atmel\ATtiny_DFP\1.4.283\gcc\dev\attiny1614"</avrgcc.common.Device>
         <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
         <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
         <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
@@ -127,7 +127,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGccCpp>
-        <avrgcc.common.Device>-mmcu=attiny412 -B "%24(PackRepoDir)\Atmel\ATtiny_DFP\1.4.283\gcc\dev\attiny412"</avrgcc.common.Device>
+        <avrgcc.common.Device>-mmcu=attiny1614 -B "%24(PackRepoDir)\Atmel\ATtiny_DFP\1.4.283\gcc\dev\attiny1614"</avrgcc.common.Device>
         <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
         <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
         <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
@@ -184,6 +184,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="bme280.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="bme280.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="BME280_driver-bme280_v3.3.7\bme280.c">
       <SubType>compile</SubType>
     </Compile>
@@ -193,10 +199,22 @@
     <Compile Include="BME280_driver-bme280_v3.3.7\bme280_defs.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="delay.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="delay.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="spi.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="spi.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

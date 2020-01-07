@@ -104,8 +104,7 @@
 /********************************************************/
 
 #ifndef BME280_FLOAT_ENABLE
-
-/* #define BME280_FLOAT_ENABLE */
+#define BME280_FLOAT_ENABLE
 #endif
 
 #ifndef BME280_FLOAT_ENABLE
@@ -296,6 +295,19 @@ struct bme280_calib_data
  * @brief bme280 sensor structure which comprises of temperature, pressure and
  * humidity data
  */
+#ifdef BME280_FLOAT_ENABLE
+struct bme280_data
+{
+    /*! Compensated pressure */
+    double pressure;
+
+    /*! Compensated temperature */
+    double temperature;
+
+    /*! Compensated humidity */
+    double humidity;
+};
+#else
 struct bme280_data
 {
     /*! Compensated pressure */
@@ -307,6 +319,7 @@ struct bme280_data
     /*! Compensated humidity */
     uint32_t humidity;
 };
+#endif /* BME280_USE_FLOATING_POINT */
 
 /*!
  * @brief bme280 sensor structure which comprises of uncompensated temperature,
