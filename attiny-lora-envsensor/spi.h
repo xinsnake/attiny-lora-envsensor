@@ -8,10 +8,7 @@
 #define SPI_MISO PIN2_bm
 #define SPI_CLOCK PIN3_bm
 
-#define SPI_ID_BME280 0
 #define SPI_SS_BME280 PIN7_bm
-
-#define SPI_ID_LORA 1
 #define SPI_SS_LORA PIN6_bm
 
 void SPI_init();

@@ -184,10 +184,10 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="bme280.cpp">
+    <Compile Include="bme.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="bme280.h">
+    <Compile Include="bme.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="BME280_driver-bme280_v3.3.7\bme280.c">

@@ -1,4 +1,4 @@
-#include "bme280.h"
+#include "bme.h"
 
 int8_t BME280_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len)
 {
@@ -16,7 +16,7 @@ int8_t BME280_init(bme280_dev* dev)
 {
 	int8_t rslt = BME280_OK;
 	
-	dev->dev_id = SPI_ID_BME280;
+	dev->dev_id = 0;
 	dev->intf = BME280_SPI_INTF;
 	dev->read = BME280_read;
 	dev->write = BME280_write;
