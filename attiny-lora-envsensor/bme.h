@@ -13,7 +13,7 @@
 #include <avr/io.h>
 #include "spi.h"
 #include "delay.h"
-#include "BME280_driver-bme280_v3.3.7/bme280.h"
+#include "BME280_driver-bme280_v3.4.1/bme280.h"
 
 int8_t BME280_init(bme280_dev* dev);
 int8_t BME280_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len);

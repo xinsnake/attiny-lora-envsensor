@@ -27,3 +27,5 @@
 *.atsuo
 
 # End of https://www.gitignore.io/api/atmelstudio
+
+attiny-lora-envsensor/key.h

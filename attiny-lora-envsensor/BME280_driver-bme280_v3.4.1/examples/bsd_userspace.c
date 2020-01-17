@@ -1,20 +1,19 @@
 /*
- * Linux userspace test code, simple and mose code directy from the doco.
- * compile like this: gcc linux_userspace.c ../bme280.c -I ../ -o bme280
- * tested: Raspberry Pi.
- * Use like: ./bme280 /dev/i2c-0
+ * BSD userspace test code, simple and mose code directy from the doco.
+ * compile like this: cc bsd_userspace.c ../bme280.c -I ../ -o bme280
+ * tested: NanoPi NEO.
+ * Use like: ./bme280 /dev/iic0
  */
 #include "bme280.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#ifdef __KERNEL__
-#include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
-#endif
 #include <sys/types.h>
 #include <fcntl.h>
+
+#include <sys/ioctl.h>
+#include <dev/iicbus/iic.h>
 
 int fd;
 
@@ -24,31 +23,64 @@ int8_t user_i2c_write(uint8_t id, uint8_t reg_addr, uint8_t *data, uint16_t len)
 void print_sensor_data(struct bme280_data *comp_data);
 int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev);
 
+
 int8_t user_i2c_read(uint8_t id, uint8_t reg_addr, uint8_t *data, uint16_t len)
 {
-    write(fd, &reg_addr, 1);
-    read(fd, data, len);
+    struct iic_msg msgs[2] = {
+        {id << 1 | IIC_M_WR, IIC_M_WR, 1, &reg_addr},
+        {id << 1 | IIC_M_RD, IIC_M_RD, len, data},
+    };
 
-    return 0;
+    struct iic_rdwr_data rdwr_data = {msgs, 2};
+
+    int error = ioctl(fd, I2CRDWR, &rdwr_data);
+    if (error) {
+        return BME280_E_COMM_FAIL;
+    }
+
+    return BME280_OK;
 }
+
 
 void user_delay_ms(uint32_t period)
 {
     usleep(period * 1000);
 }
 
+
 int8_t user_i2c_write(uint8_t id, uint8_t reg_addr, uint8_t *data, uint16_t len)
 {
-    int8_t *buf;
-
-    buf = malloc(len + 1);
-    buf[0] = reg_addr;
-    memcpy(buf + 1, data, len);
-    if (write(fd, buf, len + 1) < len)
+    uint8_t *buf = malloc( (1 + len) * sizeof(uint8_t) );
+    if (buf == NULL) {
         return BME280_E_COMM_FAIL;
+    }
+
+    buf[0] = reg_addr;
+
+    for (int i = 0; i < len; i++) {
+        buf[i+1] = data[i];
+    }
+
+    struct iic_msg msg;
+
+    msg.slave = id << 1 | !IIC_M_RD;
+    msg.flags = !IIC_M_RD;
+    msg.len = (1 + len) * sizeof(uint8_t);
+    msg.buf = buf;
+
+    struct iic_rdwr_data rdwr_data = {&msg, 1};
+
+    int error = ioctl(fd, I2CRDWR, &rdwr_data);
+    if (error) {
+        free(buf);
+        return BME280_E_COMM_FAIL;
+    }
+
     free(buf);
-	return BME280_OK;
+
+    return BME280_OK;
 }
+
 
 void print_sensor_data(struct bme280_data *comp_data)
 {
@@ -71,6 +103,7 @@ void print_sensor_data(struct bme280_data *comp_data)
     printf("%0.2lf deg C, %0.2lf hPa, %0.2lf%%\n", temp, press, hum);
 }
 
+
 int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
 {
     int8_t rslt;
@@ -86,11 +119,11 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
     settings_sel = BME280_OSR_PRESS_SEL | BME280_OSR_TEMP_SEL | BME280_OSR_HUM_SEL | BME280_FILTER_SEL;
 
     rslt = bme280_set_sensor_settings(settings_sel, dev);
-	if (rslt != BME280_OK)
-	{
-		fprintf(stderr, "Failed to set sensor settings (code %+d).", rslt);
-		return rslt;
-	}
+    if (rslt != BME280_OK)
+    {
+        fprintf(stderr, "Failed to set sensor settings (code %+d).", rslt);
+        return rslt;
+    }
 
     printf("Temperature, Pressure, Humidity\n");
     /* Continuously stream sensor data */
@@ -111,10 +144,13 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
             break;
         }
         print_sensor_data(&comp_data);
+        dev->delay_ms(1000);
     }
 
     return rslt;
 }
+
+
 
 int main(int argc, char* argv[])
 {
@@ -126,7 +162,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Missing argument for i2c bus.\n");
         exit(1);
     }
-    
+
     // make sure to select BME280_I2C_ADDR_PRIM
     // or BME280_I2C_ADDR_SEC as needed
     dev.dev_id =
@@ -142,25 +178,20 @@ int main(int argc, char* argv[])
     dev.write = user_i2c_write;
     dev.delay_ms = user_delay_ms;
 
+
     if ((fd = open(argv[1], O_RDWR)) < 0)
     {
         fprintf(stderr, "Failed to open the i2c bus %s\n", argv[1]);
-    exit(1);
-    }
-#ifdef __KERNEL__
-    if (ioctl(fd, I2C_SLAVE, dev.dev_id) < 0)
-    {
-        fprintf(stderr, "Failed to acquire bus access and/or talk to slave.\n");
         exit(1);
     }
-#endif
 
     rslt = bme280_init(&dev);
     if (rslt != BME280_OK)
     {
         fprintf(stderr, "Failed to initialize the device (code %+d).\n", rslt);
         exit(1);
-}
+    }
+
     rslt = stream_sensor_data_forced_mode(&dev);
     if (rslt != BME280_OK)
     {

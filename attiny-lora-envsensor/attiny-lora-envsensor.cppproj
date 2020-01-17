@@ -139,6 +139,7 @@
           <ListValues>
             <Value>DEBUG</Value>
             <Value>F_CPU=4000000UL</Value>
+            <Value>AU915</Value>
           </ListValues>
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
@@ -157,6 +158,7 @@
           <ListValues>
             <Value>DEBUG</Value>
             <Value>F_CPU=4000000UL</Value>
+            <Value>AU915</Value>
           </ListValues>
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
@@ -190,13 +192,13 @@
     <Compile Include="bme.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="BME280_driver-bme280_v3.3.7\bme280.c">
+    <Compile Include="BME280_driver-bme280_v3.4.1\bme280.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="BME280_driver-bme280_v3.3.7\bme280.h">
+    <Compile Include="BME280_driver-bme280_v3.4.1\bme280.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="BME280_driver-bme280_v3.3.7\bme280_defs.h">
+    <Compile Include="BME280_driver-bme280_v3.4.1\bme280_defs.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="delay.cpp">
@@ -205,10 +207,19 @@
     <Compile Include="delay.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="key.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="rtc.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="rtc.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="spi.cpp">
@@ -217,9 +228,20 @@
     <Compile Include="spi.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="TinyLoRa\TinyLora.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="TinyLoRa\TinyLora.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="BME280_driver-bme280_v3.3.7\" />
+    <Folder Include="BME280_driver-bme280_v3.4.1\" />
+    <Folder Include="LoRaMac-node-4.4.3\" />
+    <Folder Include="LoRaMac-node-4.4.3\src\" />
+    <Folder Include="LoRaMac-node-4.4.3\src\boards\" />
+    <Folder Include="LoRaMac-node-4.4.3\src\system\" />
+    <Folder Include="TinyLoRa" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

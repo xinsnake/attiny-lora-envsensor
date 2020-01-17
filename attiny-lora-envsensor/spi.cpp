@@ -18,7 +18,7 @@ void SPI_init()
 
 	SPI0.CTRLB = SPI_BUFEN_bm /*Buffer Mode Enable */ |
 					SPI_SSD_bm /*Slave Select Disable */ |
-					SPI_MODE_3_gc; /*SPI Mode 3 */
+					SPI_MODE_0_gc; /*SPI Mode 0 */
 }
 
 uint8_t SPI_transmit(uint8_t data)
