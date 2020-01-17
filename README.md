@@ -13,12 +13,30 @@ The hardware I selected:
 - RFM95W with antenna
 - BME280 3.3v with SPI interface (6-pin board)
 
-Tools I am using:
+Tools I am using for development:
 
 - Atmel Studio 7
 - Atmel-ICE / MPLAB® PICkit 4
 - Kingst Logic Analyzer
 
+## Modification
+
+- For BME280 take out all the resistors on the surface to reduce power consumption
+  by ~450uA. We are using SPI so no pull-up resistors are needed here.
+
+## The Things Network
+
+- I haven't done anything on OTAA, and currently keys are hard-coded.
+- Copy `key.example.h` file and name it `key.h`, then replace the values there.
+
+## Power consumption
+
+I don't have a precise tool to measure low current, but based on my multimeter:
+
+- Wake up time lasts for about 0.2s, not sure the total power consumption, but peak
+  current is around 60mA.
+- Sleep current is around 7uA.
+
 ## Schematics
 
-![Schematic.2020-01-08.012123.png](/imgs/Schematic.2020-01-08.012123.png)
+![Schematic.png](/imgs/Schematic.png)
